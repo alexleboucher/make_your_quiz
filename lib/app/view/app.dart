@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:make_your_quiz/app/cubit/settings_cubit.dart';
 
 import 'package:make_your_quiz/app/util/app_theme.dart';
+import 'package:make_your_quiz/home/view/home_page.dart';
+import 'package:make_your_quiz/settings/view/settings_page.dart';
 
 class App extends StatelessWidget {
   App({super.key});
@@ -11,7 +13,8 @@ class App extends StatelessWidget {
   final routerDelegate = BeamerDelegate(
     locationBuilder: RoutesLocationBuilder(
       routes: {
-        '/': (context, state, data) => const MyWidget(),
+        '/': (context, state, data) => const HomePage(),
+        '/settings': (context, state, data) => const SettingsPage(),
       },
     ).call,
   );
@@ -29,24 +32,6 @@ class App extends StatelessWidget {
             debugShowCheckedModeBanner: false,
           );
         },
-      ),
-    );
-  }
-}
-
-class MyWidget extends StatelessWidget {
-  const MyWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Center(
-        child: Text('Make Your Quiz'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.read<SettingsCubit>().toggleTheme(),
-        tooltip: 'Change theme',
-        child: const Icon(Icons.change_circle),
       ),
     );
   }
