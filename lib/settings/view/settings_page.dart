@@ -1,5 +1,7 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:make_your_quiz/settings/view/questions_section.dart';
 import 'package:make_your_quiz/shared/widgets/app_scaffold.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
@@ -9,21 +11,33 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      body: Stack(
-        children: [
-          Positioned(
-            right: 15,
-            top: 15,
-            child: IconButton(
-              onPressed: () => context.beamToNamed('/'),
-              icon: const Icon(Icons.close),
-              iconSize: 30,
-            ),
+      showThemeSwitch: false,
+      body: Container(
+        margin: const EdgeInsets.all(30),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  AppText(
+                    'Paramètres',
+                    typo: Typo.displaySmall,
+                    style: GoogleFonts.ubuntu(fontWeight: FontWeight.w600),
+                  ),
+                  IconButton(
+                    onPressed: () => context.beamToNamed('/'),
+                    icon: const Icon(Icons.close),
+                    iconSize: 30,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const QuestionsSection(),
+            ],
           ),
-          const Center(
-            child: AppText('SETTINGS'),
-          ),
-        ],
+        ),
       ),
     );
   }
