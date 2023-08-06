@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:make_your_quiz/settings/view/question_dialog.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
 class QuestionsSection extends StatefulWidget {
@@ -30,21 +31,37 @@ class _QuestionsSectionState extends State<QuestionsSection> {
             shrinkWrap: true,
             children: [
               for (int i = 0; i < _items.length; i++)
-                ReorderableDragStartListener(
+                Card(
                   key: Key('$i'),
-                  index: i,
-                  child: Card(
-                    child: ListTile(
-                      title: Text('This is tile number ${_items[i]}'),
-                      leading: const Icon(Icons.drag_handle),
-                      trailing: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _items.removeAt(i);
-                          });
-                        },
-                        icon: const Icon(Icons.delete),
-                      ),
+                  child: ListTile(
+                    title: Text('This is tile number ${_items[i]}'),
+                    leading: ReorderableDragStartListener(
+                      index: i,
+                      child: const Icon(Icons.drag_handle),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          onPressed: () => showDialog<dynamic>(
+                            context: context,
+                            builder: (BuildContext context) =>
+                                const QuestionDialog(),
+                          ),
+                          icon: const Icon(Icons.edit),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _items.removeAt(i);
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.delete,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
