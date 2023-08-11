@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:make_your_quiz/model/question.dart';
 import 'package:make_your_quiz/settings/view/question_dialog.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
@@ -11,7 +12,17 @@ class QuestionsSection extends StatefulWidget {
 }
 
 class _QuestionsSectionState extends State<QuestionsSection> {
-  final List<int> _items = List<int>.generate(15, (int index) => index);
+  final List<Question> _items = List<Question>.generate(
+    15,
+    (int index) => Question(
+      title: 'Question $index',
+      goodAnswer: 'Good answer $index',
+      otherAnswers: List<String>.generate(
+        3,
+        (int idx) => 'Other answer $index - $idx',
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +45,7 @@ class _QuestionsSectionState extends State<QuestionsSection> {
                 Card(
                   key: Key('$i'),
                   child: ListTile(
-                    title: Text('This is tile number ${_items[i]}'),
+                    title: Text(_items[i].title),
                     leading: ReorderableDragStartListener(
                       index: i,
                       child: const Icon(Icons.drag_handle),
@@ -45,8 +56,9 @@ class _QuestionsSectionState extends State<QuestionsSection> {
                         IconButton(
                           onPressed: () => showDialog<dynamic>(
                             context: context,
-                            builder: (BuildContext context) =>
-                                const QuestionDialog(),
+                            builder: (BuildContext context) => QuestionDialog(
+                              question: _items[i],
+                            ),
                           ),
                           icon: const Icon(Icons.edit),
                         ),

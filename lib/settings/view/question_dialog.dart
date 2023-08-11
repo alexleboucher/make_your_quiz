@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:make_your_quiz/model/question.dart';
 import 'package:make_your_quiz/settings/view/question_form.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
-class QuestionDialog extends StatefulWidget {
-  const QuestionDialog({super.key});
+class QuestionDialog extends StatelessWidget {
+  const QuestionDialog({this.question, super.key});
 
-  @override
-  State<QuestionDialog> createState() => _QuestionDialogState();
-}
+  final Question? question;
 
-class _QuestionDialogState extends State<QuestionDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -38,8 +36,8 @@ class _QuestionDialogState extends State<QuestionDialog> {
             const SizedBox(
               height: 12,
             ),
-            const QuestionForm(
-              title: 'Petite question ?',
+            QuestionForm(
+              question: question,
             ),
           ],
         ),
