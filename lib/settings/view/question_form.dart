@@ -18,24 +18,27 @@ abstract class _Validators {
 
   static String? otherAnswerValidator(String? value, int index) {
     return FormUtil.isNullOrEmpty(value)
-        ? "L'autre réponse nº${index + 1} doit être renseignée"
+        ? "L'autre réponse nº ${index + 1} doit être renseignée"
         : null;
   }
 }
 
 class QuestionForm extends StatefulWidget {
   const QuestionForm({
+    required this.onSubmit,
     this.question,
     super.key,
   });
 
   final Question? question;
+  final void Function(Question) onSubmit;
 
   @override
   State<QuestionForm> createState() => _QuestionFormState();
 }
 
 class _QuestionFormState extends State<QuestionForm> {
+  final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingFieldController(
     validator: _Validators.titleValidator,
   );
@@ -70,6 +73,9 @@ class _QuestionFormState extends State<QuestionForm> {
   void dispose() {
     _titleController.dispose();
     _goodAnswerController.dispose();
+    for (final otherAnswerController in _otherAnswersControllers) {
+      otherAnswerController.dispose();
+    }
     super.dispose();
   }
 
@@ -82,9 +88,23 @@ class _QuestionFormState extends State<QuestionForm> {
     }
   }
 
+  void handleSubmit() {
+    final isFormValid = _formKey.currentState?.validate();
+    if (isFormValid ?? false) {
+      final newQuestion = Question(
+        title: _titleController.controller.text,
+        goodAnswer: _goodAnswerController.controller.text,
+        otherAnswers:
+            _otherAnswersControllers.map((c) => c.controller.text).toList(),
+      );
+      widget.onSubmit(newQuestion);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
+      key: _formKey,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       onChanged: checkFormValid,
       child: Column(
@@ -116,14 +136,14 @@ class _QuestionFormState extends State<QuestionForm> {
               controller: _otherAnswersControllers[i].controller,
               validator: _otherAnswersControllers[i].validator,
               decoration: InputDecoration(
-                labelText: 'Autre réponse nº${i + 1}',
+                labelText: 'Autre réponse nº ${i + 1}',
                 helperText: '*champ obligatoire',
               ),
             ),
             const SizedBox(height: 15)
           ],
           ElevatedButton(
-            onPressed: _isValid ? () {} : null,
+            onPressed: _isValid ? handleSubmit : null,
             child: const Text('OK'),
           )
         ],

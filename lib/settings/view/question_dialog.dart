@@ -5,9 +5,14 @@ import 'package:make_your_quiz/settings/view/question_form.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
 class QuestionDialog extends StatelessWidget {
-  const QuestionDialog({this.question, super.key});
+  const QuestionDialog({
+    required this.onSubmit,
+    this.question,
+    super.key,
+  });
 
   final Question? question;
+  final void Function(Question) onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +43,10 @@ class QuestionDialog extends StatelessWidget {
             ),
             QuestionForm(
               question: question,
+              onSubmit: (question) {
+                onSubmit(question);
+                Navigator.pop(context);
+              },
             ),
           ],
         ),

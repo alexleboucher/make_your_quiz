@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:make_your_quiz/app/cubit/settings_cubit.dart';
+import 'package:make_your_quiz/shared/widgets/theme_switch.dart';
 
 class AppScaffold extends StatelessWidget {
   const AppScaffold({
@@ -14,22 +13,13 @@ class AppScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode =
-        context.select((SettingsCubit cubit) => cubit.state.themeMode);
-
     return Scaffold(
       body: body,
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: showThemeSwitch
-          ? SizedBox(
-              height: 32,
-              child: FittedBox(
-                fit: BoxFit.fill,
-                child: Switch(
-                  value: themeMode == ThemeMode.light,
-                  onChanged: (_) => context.read<SettingsCubit>().toggleTheme(),
-                ),
-              ),
+          ? const SizedBox(
+              height: 12,
+              child: FittedBox(fit: BoxFit.fill, child: ThemeSwitch()),
             )
           : null,
     );

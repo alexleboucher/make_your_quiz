@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:make_your_quiz/model/question.dart';
+import 'package:make_your_quiz/app/cubit/settings_cubit.dart';
 import 'package:make_your_quiz/settings/view/question_dialog.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
@@ -31,20 +32,11 @@ class _QuestionsSectionState extends State<QuestionsSection>
     super.initState();
   }
 
-  final List<Question> _items = List<Question>.generate(
-    15,
-    (int index) => Question(
-      title: 'Question $index',
-      goodAnswer: 'Good answer $index',
-      otherAnswers: List<String>.generate(
-        3,
-        (int idx) => 'Other answer $index - $idx',
-      ),
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
+    final questions =
+        context.select((SettingsCubit cubit) => cubit.state.questions);
+
     return ExpansionTile(
       shape: Border.all(color: Colors.transparent),
       tilePadding: const EdgeInsets.symmetric(horizontal: 5),
@@ -59,7 +51,9 @@ class _QuestionsSectionState extends State<QuestionsSection>
           IconButton(
             onPressed: () => showDialog<dynamic>(
               context: context,
-              builder: (BuildContext context) => const QuestionDialog(),
+              builder: (BuildContext context) => QuestionDialog(
+                onSubmit: context.read<SettingsCubit>().addQuestion,
+              ),
             ),
             icon: const Icon(Icons.add),
           ),
@@ -84,11 +78,11 @@ class _QuestionsSectionState extends State<QuestionsSection>
             buildDefaultDragHandles: false,
             shrinkWrap: true,
             children: [
-              for (int i = 0; i < _items.length; i++)
+              for (int i = 0; i < questions.length; i++)
                 Card(
                   key: Key('$i'),
                   child: ListTile(
-                    title: Text(_items[i].title),
+                    title: Text(questions[i].title),
                     leading: ReorderableDragStartListener(
                       index: i,
                       child: const Icon(Icons.drag_handle),
@@ -100,16 +94,15 @@ class _QuestionsSectionState extends State<QuestionsSection>
                           onPressed: () => showDialog<dynamic>(
                             context: context,
                             builder: (BuildContext context) => QuestionDialog(
-                              question: _items[i],
+                              question: questions[i],
+                              onSubmit: print,
                             ),
                           ),
                           icon: const Icon(Icons.edit),
                         ),
                         IconButton(
                           onPressed: () {
-                            setState(() {
-                              _items.removeAt(i);
-                            });
+                            context.read<SettingsCubit>().deleteQuestion(i);
                           },
                           icon: const Icon(
                             Icons.delete,
@@ -126,8 +119,8 @@ class _QuestionsSectionState extends State<QuestionsSection>
                 if (oldIndex < newIndex) {
                   newIndex -= 1;
                 }
-                final item = _items.removeAt(oldIndex);
-                _items.insert(newIndex, item);
+                final item = questions.removeAt(oldIndex);
+                questions.insert(newIndex, item);
               });
             },
           ),
