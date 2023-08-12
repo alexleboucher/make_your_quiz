@@ -11,7 +11,26 @@ class QuestionsSection extends StatefulWidget {
   State<QuestionsSection> createState() => _QuestionsSectionState();
 }
 
-class _QuestionsSectionState extends State<QuestionsSection> {
+class _QuestionsSectionState extends State<QuestionsSection>
+    with SingleTickerProviderStateMixin {
+  static final Animatable<double> _easeInTween =
+      CurveTween(curve: Curves.easeIn);
+  static final Animatable<double> _halfTween =
+      Tween<double>(begin: 0, end: 0.5);
+
+  late AnimationController _animationController;
+  late Animation<double> _iconTurns;
+
+  @override
+  void initState() {
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _iconTurns = _animationController.drive(_halfTween.chain(_easeInTween));
+    super.initState();
+  }
+
   final List<Question> _items = List<Question>.generate(
     15,
     (int index) => Question(
@@ -34,7 +53,31 @@ class _QuestionsSectionState extends State<QuestionsSection> {
         typo: Typo.headlineSmall,
         style: GoogleFonts.ubuntu(fontWeight: FontWeight.w400),
       ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed: () => showDialog<dynamic>(
+              context: context,
+              builder: (BuildContext context) => const QuestionDialog(),
+            ),
+            icon: const Icon(Icons.add),
+          ),
+          RotationTransition(
+            turns: _iconTurns,
+            child: const Icon(Icons.expand_more),
+          ),
+        ],
+      ),
+      onExpansionChanged: (isExpanded) {
+        if (isExpanded) {
+          _animationController.forward();
+        } else {
+          _animationController.reverse();
+        }
+      },
       children: [
+        const SizedBox(height: 3),
         Container(
           constraints: const BoxConstraints(maxHeight: 300),
           child: ReorderableListView(

@@ -15,6 +15,12 @@ abstract class _Validators {
         ? 'La bonne réponse doit être renseignée'
         : null;
   }
+
+  static String? otherAnswerValidator(String? value, int index) {
+    return FormUtil.isNullOrEmpty(value)
+        ? "L'autre réponse nº${index + 1} doit être renseignée"
+        : null;
+  }
 }
 
 class QuestionForm extends StatefulWidget {
@@ -37,16 +43,27 @@ class _QuestionFormState extends State<QuestionForm> {
     validator: _Validators.goodAnswerValidator,
   );
 
+  final _otherAnswersControllers = List.generate(
+    3,
+    (index) => TextEditingFieldController(
+      validator: (value) => _Validators.otherAnswerValidator(value, index),
+    ),
+  );
+
   bool _isValid = false;
 
   @override
   void initState() {
-    super.initState();
     if (widget.question != null) {
       _titleController.controller.text = widget.question!.title;
       _goodAnswerController.controller.text = widget.question!.goodAnswer;
+      for (var i = 0; i < widget.question!.otherAnswers.length; i++) {
+        _otherAnswersControllers[i].controller.text =
+            widget.question!.otherAnswers[i];
+      }
     }
     checkFormValid();
+    super.initState();
   }
 
   @override
@@ -93,6 +110,18 @@ class _QuestionFormState extends State<QuestionForm> {
             ),
           ),
           const SizedBox(height: 15),
+          for (var i = 0; i < _otherAnswersControllers.length; i++) ...[
+            TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              controller: _otherAnswersControllers[i].controller,
+              validator: _otherAnswersControllers[i].validator,
+              decoration: InputDecoration(
+                labelText: 'Autre réponse nº${i + 1}',
+                helperText: '*champ obligatoire',
+              ),
+            ),
+            const SizedBox(height: 15)
+          ],
           ElevatedButton(
             onPressed: _isValid ? () {} : null,
             child: const Text('OK'),
