@@ -95,15 +95,16 @@ class _QuestionsSectionState extends State<QuestionsSection>
                             context: context,
                             builder: (BuildContext context) => QuestionDialog(
                               question: questions[i],
-                              onSubmit: print,
+                              onSubmit: (question) => context
+                                  .read<SettingsCubit>()
+                                  .editQuestion(i, question),
                             ),
                           ),
                           icon: const Icon(Icons.edit),
                         ),
                         IconButton(
-                          onPressed: () {
-                            context.read<SettingsCubit>().deleteQuestion(i);
-                          },
+                          onPressed: () =>
+                              context.read<SettingsCubit>().deleteQuestion(i),
                           icon: const Icon(
                             Icons.delete,
                             color: Colors.redAccent,
@@ -114,15 +115,8 @@ class _QuestionsSectionState extends State<QuestionsSection>
                   ),
                 ),
             ],
-            onReorder: (int oldIndex, int newIndex) {
-              setState(() {
-                if (oldIndex < newIndex) {
-                  newIndex -= 1;
-                }
-                final item = questions.removeAt(oldIndex);
-                questions.insert(newIndex, item);
-              });
-            },
+            onReorder: (int oldIndex, int newIndex) =>
+                context.read<SettingsCubit>().moveQuestion(oldIndex, newIndex),
           ),
         ),
       ],
