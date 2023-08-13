@@ -1,6 +1,8 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:make_your_quiz/app/cubit/settings_cubit.dart';
 import 'package:make_your_quiz/shared/widgets/app_scaffold.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
@@ -9,6 +11,9 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final questions =
+        context.select((SettingsCubit cubit) => cubit.state.questions);
+
     final buttonStyle = ButtonStyle(
       shape: MaterialStateProperty.all(
         RoundedRectangleBorder(
@@ -45,7 +50,7 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ElevatedButton(
-                    onPressed: () => print('Click'),
+                    onPressed: questions.isEmpty ? null : () => print('Click'),
                     style: buttonStyle,
                     child: const Text('JOUER'),
                   ),
@@ -53,7 +58,19 @@ class HomePage extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () => context.beamToNamed('/settings'),
                     style: buttonStyle,
-                    child: const Text('PARAMETRES'),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text('PARAMETRES'),
+                        if (questions.isEmpty) ...[
+                          const SizedBox(width: 5),
+                          Icon(
+                            Icons.error_rounded,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
                 ],
               ),

@@ -14,7 +14,6 @@ class Question extends Equatable {
   factory Question.fromJson(Map<String, dynamic> json) =>
       _$QuestionFromJson(json);
 
-  @override
   Map<String, dynamic> toJson() => _$QuestionToJson(this);
 
   @override
