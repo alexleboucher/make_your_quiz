@@ -43,6 +43,33 @@ class SettingsCubit extends HydratedCubit<SettingsState> {
     emit(state.copyWith(questions: newQuestions));
   }
 
+  void addLevel(String level) {
+    final newLevels = [...state.levels, level];
+    emit(state.copyWith(levels: newLevels));
+  }
+
+  void deleteLevel(int index) {
+    final newLevels = [...state.levels]..removeAt(index);
+    emit(state.copyWith(levels: newLevels));
+  }
+
+  void editLevel(int index, String level) {
+    final newLevels = [...state.levels];
+    newLevels[index] = level;
+    emit(state.copyWith(levels: newLevels));
+  }
+
+  void moveLevel(int oldIndex, int newIndex) {
+    var newIdx = newIndex;
+    final newLevels = [...state.levels];
+    if (oldIndex < newIndex) {
+      newIdx -= 1;
+    }
+    final item = newLevels.removeAt(oldIndex);
+    newLevels.insert(newIdx, item);
+    emit(state.copyWith(levels: newLevels));
+  }
+
   @override
   SettingsState? fromJson(Map<String, dynamic> json) =>
       SettingsState.fromJson(json);

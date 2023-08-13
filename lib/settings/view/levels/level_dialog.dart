@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:make_your_quiz/model/question.dart';
-import 'package:make_your_quiz/settings/view/question_form.dart';
+import 'package:make_your_quiz/settings/view/levels/level_form.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
-class QuestionDialog extends StatelessWidget {
-  const QuestionDialog({
+class LevelDialog extends StatelessWidget {
+  const LevelDialog({
     required this.onSubmit,
-    this.question,
+    this.level,
     super.key,
   });
 
-  final Question? question;
-  final void Function(Question) onSubmit;
+  final String? level;
+  final void Function(String) onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class QuestionDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AppText(
-                  'Créer une question',
+                  level != null ? 'Modifier un niveau' : 'Créer un niveau',
                   typo: Typo.headlineSmall,
                   style: GoogleFonts.ubuntu(),
                 ),
@@ -41,10 +40,10 @@ class QuestionDialog extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            QuestionForm(
-              question: question,
-              onSubmit: (question) {
-                onSubmit(question);
+            LevelForm(
+              level: level,
+              onSubmit: (level) {
+                onSubmit(level);
                 Navigator.pop(context);
               },
             ),

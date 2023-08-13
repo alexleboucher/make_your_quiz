@@ -1,7 +1,8 @@
 import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:make_your_quiz/settings/view/questions_section.dart';
+import 'package:make_your_quiz/settings/view/levels/levels_section.dart';
+import 'package:make_your_quiz/settings/view/questions/questions_section.dart';
 import 'package:make_your_quiz/shared/widgets/app_scaffold.dart';
 import 'package:make_your_quiz/shared/widgets/app_text.dart';
 
@@ -35,6 +36,8 @@ class SettingsPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               const QuestionsSection(),
+              const SizedBox(height: 10),
+              const LevelsSection(),
             ],
           ),
         ),

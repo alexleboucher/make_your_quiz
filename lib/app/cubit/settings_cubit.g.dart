@@ -14,12 +14,17 @@ SettingsState _$SettingsStateFromJson(Map<String, dynamic> json) =>
               ?.map((e) => Question.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
+      levels: (json['levels'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
     );
 
 Map<String, dynamic> _$SettingsStateToJson(SettingsState instance) =>
     <String, dynamic>{
       'themeMode': _$ThemeModeEnumMap[instance.themeMode]!,
       'questions': instance.questions,
+      'levels': instance.levels,
     };
 
 const _$ThemeModeEnumMap = {

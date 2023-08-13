@@ -71,19 +71,24 @@ class _QuestionFormState extends State<QuestionForm> {
 
   @override
   void dispose() {
-    _titleController.dispose();
-    _goodAnswerController.dispose();
-    for (final otherAnswerController in _otherAnswersControllers) {
-      otherAnswerController.dispose();
-    }
+    [
+      _titleController,
+      _goodAnswerController,
+      ..._otherAnswersControllers.map((e) => e),
+    ].dispose();
     super.dispose();
   }
 
   void checkFormValid() {
-    final isValid = _titleController.isValid && _goodAnswerController.isValid;
-    if (_isValid != isValid) {
+    final areValid = [
+      _titleController,
+      _goodAnswerController,
+      ..._otherAnswersControllers.map((e) => e),
+    ].areValid;
+
+    if (areValid != _isValid) {
       setState(() {
-        _isValid = isValid;
+        _isValid = areValid;
       });
     }
   }
@@ -105,13 +110,13 @@ class _QuestionFormState extends State<QuestionForm> {
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
       onChanged: checkFormValid,
       child: Column(
         children: [
           TextFormField(
             autofocus: true,
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            onFieldSubmitted: (_) => _isValid ? handleSubmit() : null,
             controller: _titleController.controller,
             validator: _titleController.validator,
             decoration: const InputDecoration(
@@ -122,6 +127,7 @@ class _QuestionFormState extends State<QuestionForm> {
           const SizedBox(height: 15),
           TextFormField(
             autovalidateMode: AutovalidateMode.onUserInteraction,
+            onFieldSubmitted: (_) => _isValid ? handleSubmit() : null,
             controller: _goodAnswerController.controller,
             validator: _goodAnswerController.validator,
             decoration: const InputDecoration(
@@ -133,6 +139,7 @@ class _QuestionFormState extends State<QuestionForm> {
           for (var i = 0; i < _otherAnswersControllers.length; i++) ...[
             TextFormField(
               autovalidateMode: AutovalidateMode.onUserInteraction,
+              onFieldSubmitted: (_) => _isValid ? handleSubmit() : null,
               controller: _otherAnswersControllers[i].controller,
               validator: _otherAnswersControllers[i].validator,
               decoration: InputDecoration(
@@ -144,7 +151,7 @@ class _QuestionFormState extends State<QuestionForm> {
           ],
           ElevatedButton(
             onPressed: _isValid ? handleSubmit : null,
-            child: const Text('OK'),
+            child: const Text('Valider'),
           )
         ],
       ),
