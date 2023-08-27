@@ -5,7 +5,7 @@ import 'package:make_your_quiz/shared/util/form_util.dart';
 abstract class _Validators {
   static String? levelValidator(String? value) {
     return FormUtil.isNullOrEmpty(value)
-        ? 'Le nom du vieau doit être renseigné'
+        ? 'Le nom du niveau doit être renseigné'
         : null;
   }
 }

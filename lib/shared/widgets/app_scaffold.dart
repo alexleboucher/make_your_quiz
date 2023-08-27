@@ -4,7 +4,7 @@ import 'package:make_your_quiz/shared/widgets/theme_switch.dart';
 class AppScaffold extends StatelessWidget {
   const AppScaffold({
     required this.body,
-    this.showThemeSwitch = true,
+    this.showThemeSwitch = false,
     super.key,
   });
 

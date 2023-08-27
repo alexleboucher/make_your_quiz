@@ -12,7 +12,6 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppScaffold(
-      showThemeSwitch: false,
       body: Container(
         margin: const EdgeInsets.all(30),
         child: SingleChildScrollView(
