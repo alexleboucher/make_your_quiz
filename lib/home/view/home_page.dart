@@ -50,7 +50,9 @@ class HomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ElevatedButton(
-                    onPressed: questions.isEmpty ? null : () => print('Click'),
+                    onPressed: questions.isEmpty
+                        ? null
+                        : () => context.beamToNamed('/play'),
                     style: buttonStyle,
                     child: const Text('JOUER'),
                   ),
