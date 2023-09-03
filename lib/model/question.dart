@@ -22,4 +22,9 @@ class Question extends Equatable {
   final String title;
   final String goodAnswer;
   final List<String> otherAnswers;
+
+  List<String> getShuffledAnswers() {
+    final list = [goodAnswer, ...otherAnswers]..shuffle();
+    return list;
+  }
 }

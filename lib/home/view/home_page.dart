@@ -42,6 +42,7 @@ class HomePage extends StatelessWidget {
               style: GoogleFonts.ubuntu(
                 fontWeight: FontWeight.w600,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
             IntrinsicWidth(

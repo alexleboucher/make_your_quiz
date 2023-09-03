@@ -1,15 +1,26 @@
+import 'package:beamer/beamer.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:make_your_quiz/model/play_question.dart';
 import 'package:make_your_quiz/model/question.dart';
-import 'package:make_your_quiz/shared/widgets/app_text.dart';
+import 'package:make_your_quiz/play/view/question_area.dart';
+
+class QuestionWithShuffledAnswers {
+  QuestionWithShuffledAnswers({required this.question})
+      : shuffledAnswers = question.getShuffledAnswers();
+
+  final Question question;
+  final List<String> shuffledAnswers;
+}
 
 class PlayQuestionsArea extends StatefulWidget {
-  const PlayQuestionsArea({
-    required this.questions,
+  PlayQuestionsArea({
+    required List<Question> questions,
     super.key,
-  });
+  }) : questions = questions
+            .map((e) => QuestionWithShuffledAnswers(question: e))
+            .toList();
 
-  final List<Question> questions;
+  final List<QuestionWithShuffledAnswers> questions;
 
   @override
   State<PlayQuestionsArea> createState() => _PlayQuestionsAreaState();
@@ -17,50 +28,61 @@ class PlayQuestionsArea extends StatefulWidget {
 
 class _PlayQuestionsAreaState extends State<PlayQuestionsArea> {
   int currentIndex = 0;
+  int aa = 0;
+  List<PlayQuestion> playQuestions = [];
 
   @override
   Widget build(BuildContext context) {
     final currentQuestion = widget.questions[currentIndex];
-    final shuffledAnswers = [
-      currentQuestion.goodAnswer,
-      ...currentQuestion.otherAnswers
-    ]..shuffle();
 
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          AppText(
-            currentQuestion.title,
-            typo: Typo.displaySmall,
-            style: GoogleFonts.ubuntu(fontWeight: FontWeight.w600),
+    void handleAnswerClick(String answer) {
+      final playQuestion = PlayQuestion(
+        question: currentQuestion.question,
+        userAnswer: answer,
+      );
+      if (playQuestions.elementAtOrNull(currentIndex) == null) {
+        setState(() {
+          playQuestions.add(playQuestion);
+        });
+      } else {
+        setState(() {
+          playQuestions[currentIndex] = playQuestion;
+        });
+      }
+    }
+
+    void handleNextQuestion() {
+      if (widget.questions.length > currentIndex + 1) {
+        setState(() {
+          currentIndex++;
+        });
+      } else {
+        context.beamToNamed(
+          '/score',
+          data: playQuestions,
+        );
+      }
+    }
+
+    return Column(
+      children: [
+        Expanded(
+          child: QuestionArea(
+            question: currentQuestion,
+            onAnswerClick: handleAnswerClick,
+            onNextQuestion: handleNextQuestion,
           ),
-          const SizedBox(height: 30),
-          IntrinsicWidth(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                for (final answer in shuffledAnswers) ...[
-                  ElevatedButton(
-                    onPressed: () => print(answer),
-                    style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.all(12),
-                      ),
-                      minimumSize: MaterialStateProperty.all(
-                        const Size(200, 50),
-                      ),
-                    ),
-                    child: Text(answer),
-                  ),
-                  const SizedBox(height: 10),
-                ],
-              ],
-            ),
-          )
-        ],
-      ),
+        ),
+        TweenAnimationBuilder<double>(
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeInOut,
+          tween: Tween<double>(
+            begin: currentIndex.toDouble(),
+            end: playQuestions.length.toDouble() / widget.questions.length,
+          ),
+          builder: (context, value, _) => LinearProgressIndicator(value: value),
+        ),
+      ],
     );
   }
 }

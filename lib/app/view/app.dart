@@ -5,6 +5,7 @@ import 'package:make_your_quiz/app/cubit/settings_cubit.dart';
 
 import 'package:make_your_quiz/app/util/app_theme.dart';
 import 'package:make_your_quiz/home/view/home_page.dart';
+import 'package:make_your_quiz/model/play_question.dart';
 import 'package:make_your_quiz/play/view/play_page.dart';
 import 'package:make_your_quiz/score/view/score_page.dart';
 import 'package:make_your_quiz/settings/view/settings_page.dart';
@@ -18,7 +19,8 @@ class App extends StatelessWidget {
         '/': (context, state, data) => const HomePage(),
         '/settings': (context, state, data) => const SettingsPage(),
         '/play': (context, state, data) => const PlayPage(),
-        '/score': (context, state, data) => const ScorePage(),
+        '/score': (context, state, data) =>
+            ScorePage(playQuestions: data! as List<PlayQuestion>),
       },
     ).call,
   );
