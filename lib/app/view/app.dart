@@ -32,7 +32,10 @@ class App extends StatelessWidget {
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settingsState) {
           return MaterialApp.router(
-            theme: AppTheme.getTheme(themeMode: settingsState.themeMode),
+            theme: AppTheme.getTheme(
+              themeMode: settingsState.themeMode,
+              mainColor: Color(settingsState.mainColor),
+            ),
             routerDelegate: routerDelegate,
             routeInformationParser: BeamerParser(),
             debugShowCheckedModeBanner: false,

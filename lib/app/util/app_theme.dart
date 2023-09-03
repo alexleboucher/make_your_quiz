@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 
-final ColorScheme lightColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 21, 120, 234),
-  primary: const Color.fromARGB(255, 48, 129, 222),
-  shadow: Colors.grey.withOpacity(0.8),
-);
-
-final ColorScheme darkColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 21, 120, 234),
-  primary: const Color.fromARGB(255, 48, 129, 222),
-  shadow: Colors.black.withOpacity(0.7),
-  brightness: Brightness.dark,
-);
+ColorScheme _getColorScheme(ThemeMode mode, Color mainColor) {
+  return ColorScheme.fromSeed(
+    seedColor: mainColor,
+    primary: mainColor,
+    shadow: Colors.black.withOpacity(0.7),
+    brightness: mode == ThemeMode.dark ? Brightness.dark : Brightness.light,
+  );
+}
 
 class AppTheme {
-  static ThemeData getTheme({required ThemeMode themeMode}) {
-    final colorScheme =
-        themeMode == ThemeMode.light ? lightColorScheme : darkColorScheme;
+  static ThemeData getTheme({
+    required ThemeMode themeMode,
+    required Color mainColor,
+  }) {
+    final colorScheme = _getColorScheme(themeMode, mainColor);
     return ThemeData(
       colorScheme: colorScheme,
       useMaterial3: true,

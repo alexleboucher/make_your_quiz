@@ -16,6 +16,10 @@ class SettingsCubit extends HydratedCubit<SettingsState> {
     emit(state.copyWith(themeMode: newThemeMode));
   }
 
+  void editMainColor(Color color) {
+    emit(state.copyWith(mainColor: color.value));
+  }
+
   void addQuestion(Question question) {
     final newQuestions = [...state.questions, question];
     emit(state.copyWith(questions: newQuestions));

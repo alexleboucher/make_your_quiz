@@ -10,6 +10,7 @@ SettingsState _$SettingsStateFromJson(Map<String, dynamic> json) =>
     SettingsState(
       themeMode: $enumDecodeNullable(_$ThemeModeEnumMap, json['themeMode']) ??
           ThemeMode.dark,
+      mainColor: json['mainColor'] as int? ?? 0xFF1578EA,
       questions: (json['questions'] as List<dynamic>?)
               ?.map((e) => Question.fromJson(e as Map<String, dynamic>))
               .toList() ??
@@ -23,6 +24,7 @@ SettingsState _$SettingsStateFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SettingsStateToJson(SettingsState instance) =>
     <String, dynamic>{
       'themeMode': _$ThemeModeEnumMap[instance.themeMode]!,
+      'mainColor': instance.mainColor,
       'questions': instance.questions,
       'levels': instance.levels,
     };
