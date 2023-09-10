@@ -9,6 +9,9 @@ import 'package:make_your_quiz/shared/widgets/custom_expansion_tile.dart';
 class LevelsSection extends StatelessWidget {
   const LevelsSection({super.key});
 
+  static const noLevelsWarning =
+      'La liste de niveaux est vide. Aucun niveau ne sera affiché sur la page de score.';
+
   @override
   Widget build(BuildContext context) {
     final levels = context.select((SettingsCubit cubit) => cubit.state.levels);
@@ -29,10 +32,22 @@ class LevelsSection extends StatelessWidget {
               color: questions.length != levels.length ? Colors.amber : null,
             ),
           ),
-          if (questions.length != levels.length) ...[
+          if (levels.isNotEmpty && questions.length != levels.length) ...[
             const SizedBox(width: 5),
             const Tooltip(
-              message: "Le nombre de niveaux et de questions n'est pas le même",
+              message:
+                  "Le nombre de niveaux et de questions n'est pas le même.",
+              child: Icon(
+                Icons.warning_rounded,
+                color: Colors.amber,
+                size: 25,
+              ),
+            ),
+          ],
+          if (levels.isEmpty && questions.isNotEmpty) ...[
+            const SizedBox(width: 5),
+            const Tooltip(
+              message: noLevelsWarning,
               child: Icon(
                 Icons.warning_rounded,
                 color: Colors.amber,
@@ -109,7 +124,7 @@ class LevelsSection extends StatelessWidget {
             ]
           : [
               const SizedBox(height: 5),
-              const AppText('La liste de niveaux est vide'),
+              const AppText(noLevelsWarning),
               const SizedBox(height: 5),
             ],
     );

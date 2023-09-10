@@ -28,7 +28,6 @@ class PlayQuestionsArea extends StatefulWidget {
 
 class _PlayQuestionsAreaState extends State<PlayQuestionsArea> {
   int currentIndex = 0;
-  int aa = 0;
   List<PlayQuestion> playQuestions = [];
 
   @override
