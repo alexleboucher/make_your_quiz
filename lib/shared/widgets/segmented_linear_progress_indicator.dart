@@ -15,6 +15,8 @@ class SegmentedLinearProgressBar extends StatelessWidget {
     this.segmentColor = Colors.white,
     this.segmentDisabledColor,
     this.segmentWidth = 1.5,
+    this.onEnd,
+    this.topHint,
     super.key,
   });
 
@@ -31,72 +33,86 @@ class SegmentedLinearProgressBar extends StatelessWidget {
   final Color segmentColor;
   final Color? segmentDisabledColor;
   final double segmentWidth;
+  final void Function()? onEnd;
+  final Widget? topHint;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      height: height,
       constraints: constraints,
-      child: TweenAnimationBuilder<double>(
-        curve: curve,
-        duration: progressDuration,
-        tween: Tween<double>(
-          begin: 0,
-          end: value,
-        ),
-        builder: (context, value, _) {
-          final isCompleted = value == 1;
-          final progressColor =
-              !isCompleted ? color : (completedColor ?? color);
+      child: Column(
+        children: [
+          if (topHint != null) topHint!,
+          TweenAnimationBuilder<double>(
+            curve: curve,
+            duration: progressDuration,
+            tween: Tween<double>(
+              begin: 0,
+              end: value,
+            ),
+            onEnd: onEnd,
+            builder: (context, value, _) {
+              final isCompleted = value == 1;
+              final progressColor =
+                  !isCompleted ? color : (completedColor ?? color);
 
-          return Stack(
-            children: [
-              if (borderRadius != null)
-                ClipRRect(
-                  borderRadius: borderRadius,
-                  child: LinearProgressIndicator(
-                    value: value,
-                    minHeight: height,
-                    color: progressColor,
+              return Stack(
+                children: [
+                  if (borderRadius != null)
+                    ClipRRect(
+                      borderRadius: borderRadius,
+                      child: LinearProgressIndicator(
+                        value: value,
+                        minHeight: height,
+                        color: progressColor,
+                      ),
+                    )
+                  else
+                    LinearProgressIndicator(
+                      value: value,
+                      minHeight: height,
+                      color: progressColor,
+                    ),
+                  Positioned(
+                    child: Container(
+                      width: width,
+                      height: height,
+                      constraints: constraints,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children:
+                            List.generate(sectionsCount - 1, (index) => index)
+                                .map(
+                          (index) {
+                            final isActivated =
+                                index + 1 <= value * sectionsCount;
+                            return Container(
+                              width: segmentWidth,
+                              decoration: BoxDecoration(
+                                color: isActivated
+                                    ? segmentColor
+                                    : (segmentDisabledColor ?? segmentColor),
+                                boxShadow: isActivated
+                                    ? [
+                                        BoxShadow(
+                                          color: segmentColor,
+                                          blurRadius: 3,
+                                        ),
+                                      ]
+                                    : null,
+                              ),
+                            );
+                          },
+                        ).toList(),
+                      ),
+                    ),
                   ),
-                )
-              else
-                LinearProgressIndicator(
-                  value: value,
-                  minHeight: height,
-                  color: progressColor,
-                ),
-              Positioned(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children:
-                      List.generate(sectionsCount - 1, (index) => index).map(
-                    (index) {
-                      final isActivated = index + 1 <= value * sectionsCount;
-                      return Container(
-                        width: segmentWidth,
-                        decoration: BoxDecoration(
-                          color: isActivated
-                              ? segmentColor
-                              : (segmentDisabledColor ?? segmentColor),
-                          boxShadow: isActivated
-                              ? [
-                                  BoxShadow(
-                                    color: segmentColor,
-                                    blurRadius: 3,
-                                  ),
-                                ]
-                              : null,
-                        ),
-                      );
-                    },
-                  ).toList(),
-                ),
-              ),
-            ],
-          );
-        },
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }

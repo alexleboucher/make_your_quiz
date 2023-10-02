@@ -9,14 +9,31 @@ import 'package:make_your_quiz/shared/widgets/custom_expansion_tile.dart';
 class LevelsSection extends StatelessWidget {
   const LevelsSection({super.key});
 
+  static const levelNotDisplayWarning =
+      'Le niveau ne sera affiché sur la page de score.';
   static const noLevelsWarning =
-      'La liste de niveaux est vide. Aucun niveau ne sera affiché sur la page de score.';
+      'La liste de niveaux est vide. $levelNotDisplayWarning';
 
   @override
   Widget build(BuildContext context) {
     final levels = context.select((SettingsCubit cubit) => cubit.state.levels);
     final questions =
         context.select((SettingsCubit cubit) => cubit.state.questions);
+
+    String? warning;
+    if (levels.isNotEmpty && questions.length + 1 != levels.length) {
+      if (questions.length + 1 > levels.length) {
+        final missingLevelsNumber = questions.length + 1 - levels.length;
+        warning =
+            'Il manque $missingLevelsNumber niveau${missingLevelsNumber > 1 ? 'x' : ''}. $levelNotDisplayWarning';
+      } else {
+        final overLevelsNumber = (questions.length + 1 - levels.length).abs();
+        warning =
+            'Il y a $overLevelsNumber niveau${overLevelsNumber > 1 ? 'x' : ''} en trop. $levelNotDisplayWarning';
+      }
+    } else if (levels.isEmpty && questions.isNotEmpty) {
+      warning = noLevelsWarning;
+    }
 
     return CustomExpansionTile(
       shape: Border.all(color: Colors.transparent),
@@ -29,26 +46,14 @@ class LevelsSection extends StatelessWidget {
             typo: Typo.headlineSmall,
             style: GoogleFonts.ubuntu(
               fontWeight: FontWeight.w400,
-              color: questions.length != levels.length ? Colors.amber : null,
+              color: warning != null ? Colors.amber : null,
             ),
           ),
-          if (levels.isNotEmpty && questions.length != levels.length) ...[
+          if (warning != null) ...[
             const SizedBox(width: 5),
-            const Tooltip(
-              message:
-                  "Le nombre de niveaux et de questions n'est pas le même.",
-              child: Icon(
-                Icons.warning_rounded,
-                color: Colors.amber,
-                size: 25,
-              ),
-            ),
-          ],
-          if (levels.isEmpty && questions.isNotEmpty) ...[
-            const SizedBox(width: 5),
-            const Tooltip(
-              message: noLevelsWarning,
-              child: Icon(
+            Tooltip(
+              message: warning,
+              child: const Icon(
                 Icons.warning_rounded,
                 color: Colors.amber,
                 size: 25,
@@ -81,7 +86,7 @@ class LevelsSection extends StatelessWidget {
                       Card(
                         key: Key('$i'),
                         child: ListTile(
-                          title: Text(levels[i]),
+                          title: Text('Score $i : ${levels[i]}'),
                           leading: ReorderableDragStartListener(
                             index: i,
                             child: const Icon(Icons.drag_handle),
