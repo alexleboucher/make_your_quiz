@@ -24,6 +24,7 @@ class QuestionArea extends StatefulWidget {
 class QuestionAreaState extends State<QuestionArea> {
   String? selectedAnswer;
   bool showAnswer = false;
+  Timer? _timer;
 
   void handleAnswerClick(String answer) {
     if (!showAnswer) {
@@ -33,7 +34,7 @@ class QuestionAreaState extends State<QuestionArea> {
       });
       widget.onAnswerClick(answer);
 
-      Timer(const Duration(seconds: 3), () => widget.onNextQuestion());
+      _timer = Timer(const Duration(seconds: 3), () => widget.onNextQuestion());
     }
   }
 
@@ -46,6 +47,12 @@ class QuestionAreaState extends State<QuestionArea> {
       });
     }
     super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
