@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:make_your_quiz/app/cubit/settings_cubit.dart';
 import 'package:make_your_quiz/model/play_question.dart';
 import 'package:make_your_quiz/shared/widgets/app_scaffold.dart';
@@ -20,12 +23,36 @@ class ScorePage extends StatefulWidget {
 }
 
 class _ScorePageState extends State<ScorePage> {
+  static const hintAndLevelDuration = Duration(milliseconds: 1200);
+
   bool isProgressBarAnimationEnded = false;
+  bool isHintAndLevelAnimationEnded = false;
+  Timer? _timer;
 
   @override
   void initState() {
-    isProgressBarAnimationEnded = widget.score == 0;
+    if (widget.score == 0) {
+      Timer.run(handleProgressBarAnimationEnded);
+    }
     super.initState();
+  }
+
+  void handleProgressBarAnimationEnded() {
+    setState(() {
+      isProgressBarAnimationEnded = true;
+    });
+    _timer = Timer(
+      hintAndLevelDuration,
+      () => setState(() {
+        isHintAndLevelAnimationEnded = true;
+      }),
+    );
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -40,19 +67,31 @@ class _ScorePageState extends State<ScorePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: IconButton(
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: const Icon(Icons.close),
-                iconSize: 30,
-              ),
+          Container(
+            margin: const EdgeInsets.all(30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AppText(
+                  'Score',
+                  typo: Typo.displaySmall,
+                  style: GoogleFonts.ubuntu(fontWeight: FontWeight.w600),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.of(context).maybePop(),
+                  icon: const Icon(Icons.close),
+                  iconSize: 30,
+                ),
+              ],
             ),
           ),
           Expanded(
-            child: Center(
+            child: AnimatedAlign(
+              alignment: isHintAndLevelAnimationEnded
+                  ? Alignment.topCenter
+                  : Alignment.center,
+              curve: Curves.ease,
+              duration: const Duration(milliseconds: 750),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -64,16 +103,15 @@ class _ScorePageState extends State<ScorePage> {
                     height: 17,
                     constraints: BoxConstraints(maxWidth: screenWidth * 0.8),
                     segmentDisabledColor: Colors.grey,
-                    progressDuration: const Duration(milliseconds: 1500),
+                    progressDuration:
+                        Duration(milliseconds: numberOfQuestions * 500),
                     color: Colors.green.shade800,
-                    completedColor: Colors.amber.shade600,
+                    completedColor: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(10),
-                    onEnd: () => setState(() {
-                      isProgressBarAnimationEnded = true;
-                    }),
+                    onEnd: handleProgressBarAnimationEnded,
                     topHint: AnimatedOpacity(
                       opacity: isProgressBarAnimationEnded ? 1 : 0,
-                      duration: const Duration(seconds: 2),
+                      duration: hintAndLevelDuration,
                       child: Align(
                         alignment: Alignment.centerRight,
                         child: Padding(
@@ -93,7 +131,7 @@ class _ScorePageState extends State<ScorePage> {
                     const SizedBox(height: 10),
                     AnimatedOpacity(
                       opacity: isProgressBarAnimationEnded ? 1 : 0,
-                      duration: const Duration(seconds: 2),
+                      duration: hintAndLevelDuration,
                       child: AppText(
                         levels[widget.score],
                         typo: Typo.titleMedium,

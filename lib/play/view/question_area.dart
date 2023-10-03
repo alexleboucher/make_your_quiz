@@ -34,7 +34,7 @@ class QuestionAreaState extends State<QuestionArea> {
       });
       widget.onAnswerClick(answer);
 
-      _timer = Timer(const Duration(seconds: 3), () => widget.onNextQuestion());
+      _timer = Timer(const Duration(seconds: 2), () => widget.onNextQuestion());
     }
   }
 
