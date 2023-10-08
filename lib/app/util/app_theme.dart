@@ -5,6 +5,8 @@ ColorScheme _getColorScheme(ThemeMode mode, Color mainColor) {
     seedColor: mainColor,
     primary: mainColor,
     shadow: Colors.black.withOpacity(0.7),
+    background:
+        mode == ThemeMode.dark ? const Color.fromARGB(255, 21, 21, 21) : null,
     brightness: mode == ThemeMode.dark ? Brightness.dark : Brightness.light,
   );
 }
